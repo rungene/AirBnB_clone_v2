@@ -73,7 +73,7 @@ class HBNBCommand(cmd.Cmd):
                 pline = pline[2].strip()  # pline is now str
                 if pline:
                     # check for *args or **kwargs
-                    if pline[0] is '{' and pline[-1] is'}'\
+                    if pline[0] is '{' and pline[-1] is '}'\
                             and type(eval(pline)) is dict:
                         _args = pline
                     else:
@@ -115,16 +115,28 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
-        if not args:
+        try:
+            if not args:
+                raise SyntaxError()
+
+            args_split = args.split(' ')
+            our_instance = eval('{}()'.format(args_split[0]))
+            args_params = args_split[1:]
+            for args_param in args_params:
+                k, v = args_param.split('=')
+                try:
+                    attr = HBNBCommand.verify_attr(v)
+                except Exception:
+                    continue
+                if not attr:
+                    continue
+                setattr(our_instance, k, attr)
+            our_instance.save()
+            print(our_instance.id)
+        except SyntaxError:
             print("** class name missing **")
-            return
-        elif args not in HBNBCommand.classes:
+        except NameError:
             print("** class doesn't exist **")
-            return
-        new_instance = HBNBCommand.classes[args]()
-        storage.save()
-        print(new_instance.id)
-        storage.save()
 
     def help_create(self):
         """ Help information for the create method """
@@ -319,6 +331,23 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
+    @classmethod
+    def verify_attr(cls, attr):
+        """
+        Attribute is formatted correctly
+        """
+        if attr[0] is attr[-1] in ['"', "'"]:
+            return attr.strip('"\'').replace('_', ' ').replace('\\', '"')
+        else:
+            try:
+                try:
+                    return int(attr)
+                except ValueError:
+                    return float(attr)
+            except ValueError:
+                return None
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
