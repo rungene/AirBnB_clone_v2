@@ -48,6 +48,9 @@ class BaseModel(Base):
             del dictionary["_sa_instance_state"]
         return dictionary
     def delete(self):
+        """
+        to delete the current instance from the storage (models.storage)
+        """
         del storage._FileStorage__objects[self]
         storage.self()
 
