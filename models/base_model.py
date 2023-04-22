@@ -13,10 +13,8 @@ class BaseModel:
     Attributes:
         id: primary key,can not be null
         unique string (60 characters)
-
         created_at: datetime, can’t be null
         default value is the current datetime
-
         updated_at: datetime, can’t be nul
         default value is the current datetime
     """

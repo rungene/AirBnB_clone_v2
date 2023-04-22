@@ -11,10 +11,8 @@ class FileStorage:
     def all(self, cls=None):
         """
         Returns a list of objects of a given class
-
         Args:
             The class to filter objects by.if cls==None, return all objects
-
         Return:
             List of objects of a given class
         """
@@ -30,10 +28,8 @@ class FileStorage:
     def delete(self, obj=None):
         """
         deletes a specified object from __objects if exists
-
         Args:
             obj: The object to delete
-
         Returns:
             None
         """
