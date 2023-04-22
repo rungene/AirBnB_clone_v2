@@ -14,10 +14,9 @@ class State(BaseModel, Base):
         can’t be null
         cities:a relationship with the class City
     """
-    id = Column(Integer, primary_key=True)
     __tablename__ = 'states'
     name = Column(String(128), nullable=False)
-    cities = relationship('City', backref='state',
+    cities = relationship("City", backref="state",
                           cascade="all, delete-orphan")
 
     @property
@@ -30,7 +29,7 @@ class State(BaseModel, Base):
         """
         from models import storage
         my_list = []
-        my_cities = storage.all(City).values
+        my_cities = storage.all(City).values()
         for city in my_cities:
             if self.id == city.state_id:
                 my_list.append(city)

@@ -1,15 +1,21 @@
 #!/usr/bin/python3
 """This module defines a class to manage database storage for hbnb clone"""
 from sqlalchemy import create_engine
-from models.base_model import Base
+from models.base_model import BaseModel, Base
 import os
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from models.user import User
 from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
+
+
+mysql_user = os.environ.get('HBNB_MYSQL_USER')
+mysql_pass = os.environ.get('HBNB_MYSQL_PWD')
+mysql_host = os.environ.get('HBNB_MYSQL_HOST', 'localhost')
+mysql_db = os.environ.get('HBNB_MYSQL_DB')
 
 
 class DBStorage:
@@ -22,21 +28,17 @@ class DBStorage:
 
     def __init__(self):
         """Init method"""
-        mysql_user = os.environ.get('HBNB_MYSQL_USER')
-        mysql_pass = os.environ.get('HBNB_MYSQL_PWD')
-        mysql_host = os.environ.get('HBNB_MYSQL_HOST', 'localhost')
-        mysql_db = os.environ.get('HBNB_MYSQL_DB')
 
         if not all([mysql_user, mysql_pass, mysql_host, mysql_db]):
             raise ValueError('Please input all credentials')
 
-        url_db = f'mysql+mysqldb://{mysql_user}:\
-                                   {mysql_pass}@{mysql_host}/{mysql_db}'
+        url_db = 'mysql+mysqldb://{}:{}@{}/{}'.format(
+            mysql_user, mysql_pass, mysql_host, mysql_db)
+
+        self.__engine = create_engine(url_db, pool_pre_ping=True)
 
         if os.environ.get('HBNB_ENV') == 'test':
             Base.metadata.drop_all(self.__engine)
-
-        self.__engine = create_engine(url_db, pool_pre_ping=True)
 
     def all(self, cls=None):
         """
