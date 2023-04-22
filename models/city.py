@@ -20,5 +20,5 @@ class City(BaseModel, Base):
         is a foreign key to states.id
     """
     __tablename__ = 'cities'
-    state_id = Column(String(60), nullable=False, ForeignKey='states.id')
+    state_id = Column(String(60), ForeignKey('states.id'), nullable=False)
     name = Column(String(128), nullable=False)
