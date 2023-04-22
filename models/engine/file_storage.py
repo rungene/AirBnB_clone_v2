@@ -41,6 +41,7 @@ class FileStorage:
                     break
             if delete_key is not None:
                 del self.__objects[delete_key]
+                self.save()
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
@@ -78,3 +79,9 @@ class FileStorage:
                     self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
             pass
+
+    def close(self):
+        """
+        method for calling reload to deserialize the objects
+        """
+        self.reload()
