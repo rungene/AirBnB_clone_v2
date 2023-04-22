@@ -37,7 +37,6 @@ class HBNBCommand(cmd.Cmd):
 
     def precmd(self, line):
         """Reformat command line for advanced command syntax.
-
         Usage: <class name>.<command>([<id> [<*args> or <**kwargs>]])
         (Brackets denote optional fields in usage example.)
         """
@@ -73,7 +72,7 @@ class HBNBCommand(cmd.Cmd):
                 pline = pline[2].strip()  # pline is now str
                 if pline:
                     # check for *args or **kwargs
-                    if pline[0] is '{' and pline[-1] is'}'\
+                    if pline[0] == '{' and pline[-1] == '}'\
                             and type(eval(pline)) is dict:
                         _args = pline
                     else:
@@ -115,38 +114,28 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
-        if not args:
+        try:
+            if not args:
+                raise SyntaxError()
+
+            args_split = args.split(' ')
+            our_instance = eval('{}()'.format(args_split[0]))
+            args_params = args_split[1:]
+            for args_param in args_params:
+                k, v = args_param.split('=')
+                try:
+                    attr = HBNBCommand.verify_attr(v)
+                except Exception:
+                    continue
+                if not attr:
+                    continue
+                setattr(our_instance, k, attr)
+            our_instance.save()
+            print(our_instance.id)
+        except SyntaxError:
             print("** class name missing **")
-            return
-        argList = args.split(' ')
-        if len(args) > 1:
-           if argList[0] not in HBNBCommand.classes:
-               print("** class doesn't exist **")
-               return
-           new_instance = HBNBCommand.classes[argList[0]]()
-           dictKeys = dir(new_instance) #list of object attributes
-           for i in range(1, len(argList)):
-               temp = argList[i].split('=')
-               attr = temp[0] #class instance
-               val = temp[1] #class value
-               if val[0] == '"':
-                   val = val.strip('"')
-                   val = val.replace('_', ' ')
-               else:
-                   if '.' in val:
-                       val = float(val)
-                   else:
-                       val = int(val)
-               if attr in dictKeys:
-                   setattr(new_instance, attr, val)
-        else:
-            if args not in HBNBCommand.classes:
-                print("** class doesn't exist **")
-                return
-            new_instance = HBNBCommand.classes[args]()
-        storage.save()
-        print(new_instance.id)
-        storage.save()
+        except NameError:
+            print("** class doesn't exist **")
 
     def help_create(self):
         """ Help information for the create method """
@@ -294,7 +283,7 @@ class HBNBCommand(cmd.Cmd):
                 args.append(v)
         else:  # isolate args
             args = args[2]
-            if args and args[0] is '\"':  # check for quoted arg
+            if args and args[0] == '\"':  # check for quoted arg
                 second_quote = args.find('\"', 1)
                 att_name = args[1:second_quote]
                 args = args[second_quote + 1:]
@@ -302,10 +291,10 @@ class HBNBCommand(cmd.Cmd):
             args = args.partition(' ')
 
             # if att_name was not quoted arg
-            if not att_name and args[0] is not ' ':
+            if not att_name and args[0] != ' ':
                 att_name = args[0]
             # check for quoted val arg
-            if args[2] and args[2][0] is '\"':
+            if args[2] and args[2][0] == '\"':
                 att_val = args[2][1:args[2].find('\"', 1)]
 
             # if att_val was not quoted arg
@@ -341,6 +330,23 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
+    @classmethod
+    def verify_attr(cls, attr):
+        """
+        Attribute is formatted correctly
+        """
+        if attr[0] is attr[-1] in ['"', "'"]:
+            return attr.strip('"\'').replace('_', ' ').replace('\\', '"')
+        else:
+            try:
+                try:
+                    return int(attr)
+                except ValueError:
+                    return float(attr)
+            except ValueError:
+                return None
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
