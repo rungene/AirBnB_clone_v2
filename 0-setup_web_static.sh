@@ -33,7 +33,7 @@ if ! [ -x "$(command -v nginx)" ]; then
 fi
 
 # configure Nginx to serve web_static content
-sudo sed -i "26i \\\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}\n" /etc/nginx/sites-available/default
+sudo sed -i "33i \\\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}\n" /etc/nginx/sites-available/default
 
 # restart Nginx to apply changes
 sudo service nginx restart 
