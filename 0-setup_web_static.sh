@@ -18,10 +18,10 @@ sudo echo "<!DOCTYPE html>
 </html>" | sudo tee /data/web_static/releases/test/index.html > /dev/null
 
 # Give ownership of the /data/ folder to the ubuntu user AND group 
-chown -R ubuntu:ubuntu /data/
+sudo chown -R ubuntu:ubuntu /data/
 
 # Create a symbolic link /data/web_static/current linked to the /data/web_static/releases/test/ folder.
-ln -sf /data/web_static/releases/test/ /data/web_static/current
+sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
 
 # update the package list
 sudo apt-get -y  update
