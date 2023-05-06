@@ -6,15 +6,12 @@ sudo mkdir -p /data/web_static/releases/
 sudo mkdir -p /data/web_static/shared/
 sudo mkdir -p /data/web_static/releases/test/
 
-sudo echo "<!DOCTYPE html>
-<html>
-<head>
-  <title>NGINX Test Page</title>
-</head>
-<body>
-  <h1>NGIX test page.</h1>
-  <p>Served from Nginx, configuration is working!</p>
-</body>
+sudo echo "<html>
+  <head>
+  </head>
+  <body>
+    Holberton School
+  </body>
 </html>" | sudo tee /data/web_static/releases/test/index.html > /dev/null
 
 # Give ownership of the /data/ folder to the ubuntu user AND group 
