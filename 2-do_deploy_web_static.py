@@ -13,4 +13,14 @@ env.hosts = ['35.174.209.69, 18.208.120.192']
 env.user = 'ubuntu'
 env.key_filename = '~/.ssh/id_rsa'
 
+def do_deploy(archive_path):
+    """distributes an archive to your web servers,
 
+    Args:
+        archive_path:a compressed archive of the web_static folder.
+
+    Return:
+      if all operations have been done correctly, otherwise returns False
+    """
+    if not archive_path:
+        return False
