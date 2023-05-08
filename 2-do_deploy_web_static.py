@@ -8,6 +8,7 @@ from datetime import datetime
 import os
 
 
+env.user = 'ubuntu'
 env.hosts = ['35.174.209.69', '18.208.120.192']
 
 
