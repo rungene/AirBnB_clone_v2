@@ -4,14 +4,30 @@ that distributes an archive to your web servers, using the
 function do_deploy"""
 
 from fabric.api import run, local, env, put
-from fabric.contrib.files import append
 from datetime import datetime
-from os.path import exists
+import os
 
 
 env.hosts = ['35.174.209.69, 18.208.120.192']
 env.user = 'ubuntu'
-env.key_filename = '~/.ssh/id_rsa'
+
+
+def do_pack():
+    """ generates a .tgz archive from the contents of the web_static folder"""
+    try:
+        if not os.path.exists("versions"):
+            os.makedirs("versions")
+
+        date = datetime.now().strftime('%Y%m%d%H%M%S')
+        path_archive = "versions/web_static_{}.tgz".format(date)
+
+        local("tar -cvzf {} web_static".format(path_archive))
+
+        return path_archive
+
+    except Exception:
+        return None
+
 
 def do_deploy(archive_path):
     """distributes an archive to your web servers,
@@ -24,14 +40,14 @@ def do_deploy(archive_path):
     """
     if not archive_path:
         return False
-        
+
     result = put(archive_path, "/tmp/")
     if result.failed:
         return False
 
     filename = archive_path.split("/")[-1]
     folder_name = "/data/web_static/releases/" + filename.split(".")[0]
-    
+
     run("sudo mkdir -p {}".format(folder_name))
     run("sudo tar -xzf /tmp/{} -C {}".format(filename, folder_name))
     run("sudo mv {}/web_static/* {}/".format(folder_name, folder_name))
@@ -39,5 +55,5 @@ def do_deploy(archive_path):
     run("sudo rm -rf /data/web_static/current")
     run("sudo ln -s {} /data/web_static/current".format(folder_name))
     print('New version deployed!')
-    
+
     return True
