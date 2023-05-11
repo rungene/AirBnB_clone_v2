@@ -1,30 +1,28 @@
 #!/usr/bin/env bash
-# A Bash script that sets up your web servers for the deployment of web_static
-sudo apt-get -y  update
-#Check if Nginx is installed
-if ! [ -x "$(command -v nginx)" ]; then
-  # install Nginx since it is not installed
-  sudo apt-get -y install nginx
-fi
-sudo mkdir -p /data/web_static/shared/
-sudo mkdir -p /data/web_static/releases/test/
-
-sudo echo "<html>
-  <head>
-  </head>
-  <body>
-    Holberton School
-  </body>
-</html>" | sudo tee /data/web_static/releases/test/index.html > /dev/null
-
-# Create a symbolic link /data/web_static/current linked to the /data/web_static/releases/test/ folder.
+# This script sets up your web servers for the deployment of web_static
+sudo apt-get -y update
+sudo apt-get -y install nginx
+sudo mkdir -p /data/ /data/web_static/ /data/web_static/releases/
+sudo mkdir -p /data/web_static/shared/ /data/web_static/releases/test
+content="
+<html>
+<h1> HELLO. THIS IS MY WEBSITE </h1>
+</html>"
+echo $content | sudo tee /data/web_static/releases/index.html
 sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
-
-# Give ownership of the /data/ folder to the ubuntu user AND group 
 sudo chown -R ubuntu:ubuntu /data/
+config="
+http {
+	server {
+		listen 80;
+		server_name https://www.dh4nn.tech http://www.dh4nn.tech http://dh4nn.tech;
+		root /data/web_static/current/;
 
-# configure Nginx to serve web_static content
-sudo sed -i "33i \\\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}\n" /etc/nginx/sites-available/default
-
-# restart Nginx to apply changes
-sudo service nginx restart 
+		location /hbnb_static {
+                	alias /data/web_static/current/;
+        	}
+	}
+}
+events {}"
+echo $config | sudo tee /etc/nginx/nginx.conf
+sudo service nginx restart
