@@ -13,7 +13,7 @@ def hello_hnb():
     Return:
         string:“Hello HBNB!”
     """
-    return "“Hello HBNB!”"
+    return "Hello HBNB!"
 
 
 if __name__ == "__main__":
