@@ -19,6 +19,7 @@ def hello_hnb():
 @app.route("/hbnb", strict_slashes=False)
 def hnb():
     """starts a Flask web application
+    Adding a specific route /hnnb
     Return:
         string:“HBNB”
     """
