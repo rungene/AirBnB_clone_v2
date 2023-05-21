@@ -27,7 +27,7 @@ def hnb():
 
 
 @app.route("/c/<text>", strict_slashes=False)
-def c_text(text):
+def c_text(text=None):
     """starts a Flask web application
     Dynamic inputted text
     Return:
